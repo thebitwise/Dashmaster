@@ -219,6 +219,37 @@ trails_list:slider('Trail interval (ms)', {'dmtrailinterval'}, '', 10, 3000, 300
     trail_interval = val
 end)
 
+local supertrail_segments = {}
+
+function new_supertrail_segment(ent)
+    local c = GET_ENTITY_COORDS(ent) 
+    local trail = {
+        pos = c, 
+        rot = {x = 0, y = 0, z = 0},
+        dimensions = {x = 1, y = 1, z = 1}
+    }
+    return trail 
+end
+
+function kill_segment_after_time(segment, time)
+    util.create_thread(function()
+        util.yield(time)
+        supertrail_segments[segment] = nil
+    end)
+end
+
+trails_list:toggle_loop('Supertrail', {}, '', function()
+    local c = players.get_position(players.user())
+    for index, segment in pairs(supertrail_segments) do 
+        if segment ~= nil then 
+            util.draw_box(segment.pos, segment.rot, segment.dimensions, 255, 255, 255, 100)
+        end
+    end
+    local new_segment = new_supertrail_segment(players.user_ped())
+    supertrail_segments[#supertrail_segments+1] = new_segment
+    kill_segment_after_time(#supertrail_segments, 300)
+end)
+
 
 trails_list:list_select('Trail', {'dmtrail'}, '', trails_for_selector, 1, function(index, value)
     cur_trail = index
@@ -299,6 +330,14 @@ hud_list:toggle('Draw speed', {'dmdrawspeed'}, '', function(on)
     draw_speed = on
 end, true)
 
+
+menu.my_root():toggle_loop('Power steering', {'powersteering'}, "Applies rotational force to assist steering, regardless of grip. Great for drifting!", function()
+    local steering = GET_CONTROL_NORMAL(30, 30)
+    if steering ~= 0.0 then 
+        APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(car_hdl, 5, 0.0, 0.0, -(steering * 0.1), true, true, true, true)
+    end
+end)
+
 local drift_key_root = menu.my_root():list('Drift key')
 
 local drift_control_id = 21
@@ -316,9 +355,6 @@ drift_key_root:toggle_loop('Drift key', {'driftkey'}, "", function()
         SET_VEHICLE_REDUCE_GRIP(car_hdl, false)
     end
 end)
-
-
-
 
 
 hud_list:toggle_loop("Draw control values", {""}, "", function()
