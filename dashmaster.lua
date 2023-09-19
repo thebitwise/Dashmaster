@@ -7,10 +7,7 @@
 --$$$$$$$$\ $$ |  $$ |$$ | \$$ |\$$$$$$  |$$$$$$$$\ 
 --\________|\__|  \__|\__|  \__| \______/ \________|
 -- coded by Lance/stonerchrist on Discord
-
-local natives_version = "1681379138.g"
-util.require_natives(natives_version)
-
+util.require_natives("2944b", "g")
 local car_hdl = 0 
 
 function say(text) 
