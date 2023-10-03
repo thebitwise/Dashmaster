@@ -330,7 +330,7 @@ end, true)
 
 menu.my_root():toggle_loop('Power steering', {'powersteering'}, "Applies rotational force to assist steering, regardless of grip. Great for drifting!", function()
     local steering = GET_CONTROL_NORMAL(30, 30)
-    if steering ~= 0.0 then 
+    if steering ~= 0.0 and car_hdl ~= 0 then 
         APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(car_hdl, 5, 0.0, 0.0, -(steering * 0.1), true, true, true, true)
     end
 end)
