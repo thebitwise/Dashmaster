@@ -8,7 +8,7 @@
 --\________|\__|  \__|\__|  \__| \______/ \________|
 -- coded by Lance/stonerchrist on Discord
 util.require_natives("2944b", "g")
-local car_hdl = 0 
+local car_hdl = INVALID_GUID
 
 function say(text) 
     util.toast('[DASHMASTER] ' .. text)
@@ -330,7 +330,7 @@ end, true)
 
 menu.my_root():toggle_loop('Power steering', {'powersteering'}, "Applies rotational force to assist steering, regardless of grip. Great for drifting!", function()
     local steering = GET_CONTROL_NORMAL(30, 30)
-    if steering ~= 0.0 and car_hdl ~= 0 then 
+    if steering ~= 0.0 and car_hdl ~= INVALID_GUID then 
         APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(car_hdl, 5, 0.0, 0.0, -(steering * 0.1), true, true, true, true)
     end
 end)
@@ -355,7 +355,7 @@ end)
 
 
 hud_list:toggle_loop("Draw control values", {""}, "", function()
-    if car_hdl ~= 0 and IS_PED_IN_ANY_VEHICLE(players.user_ped(), true) then
+    if car_hdl ~= INVALID_GUID then
         local center_x = 0.8
         local center_y = 0.8
         -- main underlay
@@ -372,7 +372,7 @@ end)
 local af_downforce = 0.0
 
 util.create_tick_handler(function()
-    if car_hdl ~= 0 and af_downforce ~= 0.0 then  
+    if car_hdl ~= INVALID_GUID and af_downforce ~= 0.0 then  
         local vel = GET_ENTITY_VELOCITY(car_hdl)
         vel['z'] = -vel['z']
         APPLY_FORCE_TO_ENTITY(car_hdl, 2, 0, 0, -af_downforce -vel['z'], 0, 0, 0, 0, true, false, true, false, true)
@@ -391,8 +391,8 @@ function update_engine_sound(car, sound)
     FORCE_USE_AUDIO_GAME_OBJECT(car, sound)
 end
 
-util.create_tick_handler(function()
-    if car_hdl ~= 0 then 
+util.create_tick_handler(function() 
+    if car_hdl ~= INVALID_GUID then 
         local ct = true 
         if (last_car ~= car_hdl and cur_engine_sound_override == 'Off') then 
             ct = false
@@ -533,13 +533,13 @@ manual_transmission_list:toggle('Simulate Manual Transmission', {}, '', function
 end)
 
 manual_transmission_list:action("Shift up", {'dmshiftup'}, '', function()
-    if car_hdl ~= 0 then 
+    if car_hdl ~= INVALID_GUID then 
         m_shift_up_this_frame = true 
     end
 end)
 
 manual_transmission_list:action("Shift down", {'dmshiftdown'}, '', function()
-    if car_hdl ~= 0 then 
+    if car_hdl ~= INVALID_GUID then 
         m_shift_down_this_frame = true 
     end
 end)
@@ -548,8 +548,7 @@ end)
 
 util.create_tick_handler(function()
     if cam_2_mode then 
-        local v = GET_VEHICLE_PED_IS_IN(players.user_ped(), true)
-        if v == -1 then 
+        if car_hdl == INVALID_GUID then 
             v = players.user_ped()
         end
 
