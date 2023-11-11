@@ -667,7 +667,7 @@ util.create_tick_handler(function()
 
         local speed = math.ceil(GET_ENTITY_SPEED(car_hdl))
         local unit_text = ms_label
-        pluto_switch speed_setting do 
+        switch speed_setting do 
             case "MPH":
                 unit_text = mph_label
                 speed = math.ceil(speed * 2.236936)
