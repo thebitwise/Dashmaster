@@ -8,6 +8,7 @@
 --\________|\__|  \__|\__|  \__| \______/ \________|
 -- coded by Lance/stonerchrist on Discord
 util.require_natives("2944b", "g")
+pluto_use "0.6.0"
 local car_hdl = INVALID_GUID
 
 function say(text) 
