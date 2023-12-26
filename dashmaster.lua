@@ -48,7 +48,7 @@ local kph_label = directx.create_texture(resources_dir .. '/kph_label.png')
 local ms_label = directx.create_texture(resources_dir .. '/ms_label.png')
 
 local speed_setting = 'MPH'
-local speed_settings = {'MPH', 'KPH', 'M/S'}
+local speed_settings = {{1, 'MPH', {}}, {2,'KPH'}, {3, 'M/S'}}
 menu.my_root():list_select("Speed unit", {'dashmasterunits'}, "", speed_settings, 1, function(unit)
     speed_setting = speed_settings[unit]
 end)
@@ -127,7 +127,7 @@ local trails = {
 
 local trails_for_selector = {}
 for id, trail in pairs(trails) do 
-    trails_for_selector[id] = trail.effect
+    trails_for_selector[id] = {id, trail.effect, {}}
 end
 
 local cur_trail = 1
@@ -384,6 +384,12 @@ menu.my_root():slider_float("Artificial downforce", {'afdownforce'}, '', 0, 1000
     af_downforce = v * 0.01
 end)
 
+menu.my_root():action('Compress car', {}, '', function()
+    for i = 1, 1000 do
+        SET_VEHICLE_DAMAGE(car_hdl, math.random(-10, 10), math.random(-10, 10), math.random(-10, 10), 10000.0, 1850.0, true)
+    end
+end)
+
 local cur_engine_sound_override = 'off' --placeholder value, will be changed automatically
 local last_car = 0
 local last_esound_override = -1
@@ -409,7 +415,7 @@ util.create_tick_handler(function()
     end
 end)
 
-local engine_sound_overrides = {'Off', 'Adder', 'Zentorno', 'Openwheel1', 'Openwheel2', 'Formula', 'Formula2', 'Tractor', 'Buffalo4', 'XA21', 'Drafter', 'Jugular', 'TurismoR', 'Voltic2', 'Neon'}
+local engine_sound_overrides = {{1, 'Off'}, {2, 'Adder'}, {3, 'Zentorno'}, {4, 'Openwheel1'}, {5, 'Openwheel2'}, {6, 'Formula'}, {7, 'Formula2'}, {8, 'Tractor'}, {9, 'Buffalo4'}, {10, 'XA21'}, {11, 'Drafter'}, {12, 'Jugular'}, {13, 'TurismoR'}, {14, 'Voltic2'}, {15, 'Neon'}}
 menu.my_root():list_select("Engine swap", {}, 'Make your car\'s engine sound like another engine.\nOnly you can hear this.', engine_sound_overrides, 1, function(index, val)
     if index == 1 then
         local model_name = util.reverse_joaat(GET_ENTITY_MODEL(car_hdl))
@@ -668,7 +674,7 @@ util.create_tick_handler(function()
 
         local speed = math.ceil(GET_ENTITY_SPEED(car_hdl))
         local unit_text = ms_label
-        switch speed_setting do 
+        pluto_switch speed_setting do 
             case "MPH":
                 unit_text = mph_label
                 speed = math.ceil(speed * 2.236936)
