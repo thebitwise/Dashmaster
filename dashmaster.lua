@@ -50,7 +50,7 @@ local ms_label = directx.create_texture(resources_dir .. '/ms_label.png')
 local speed_setting = 'MPH'
 local speed_settings = {{1, 'MPH', {}}, {2,'KPH'}, {3, 'M/S'}}
 menu.my_root():list_select("Speed unit", {'dashmasterunits'}, "", speed_settings, 1, function(unit)
-    speed_setting = speed_settings[unit]
+    speed_setting = speed_settings[unit][2]
 end)
 
 local dm_x_off = 0.00 
